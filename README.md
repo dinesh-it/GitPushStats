@@ -1,9 +1,11 @@
 ## Script to generate an organization users git push information
 
 ### Set the following ENV variables
-GITHUB_USER - to your github username
-GITHUB_ORG - to the Organization name that you are willing to get the info and have access to it
-GITHUB_TOKEN - Login to github and goto https://github.com/settings/tokens and generate a new token and use it. (Don't give any write permissions while generating token)
+`GITHUB_USER` - to your github username
+
+`GITHUB_ORG` - to organization name that you are willing to get the info and have access to it
+
+`GITHUB_TOKEN` - Login and goto https://github.com/settings/tokens and generate a new token. (Don't give any write permissions while generating token)
 
 
 ### Run the script
