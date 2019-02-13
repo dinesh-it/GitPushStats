@@ -1,0 +1,95 @@
+<html>
+	<head>
+		<title>[% organization %]- git push events</title>
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+		<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+		<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+		<style>
+			tr.group,
+			tr.group:hover {
+				background-color: #ddd !important;
+			}
+		</style>
+		<script>
+			$(document).ready(function() {
+				var groupColumn = 0;
+				var total_cols = 5;
+				var table = $('#git_events').DataTable({
+					"columnDefs": [
+					{ "visible": false, "targets": groupColumn }
+					],
+					"order": [[ groupColumn, 'asc' ]],
+					"displayLength": 50,
+					"drawCallback": function ( settings ) {
+						var api = this.api();
+						var rows = api.rows( {page:'current'} ).nodes();
+						var last = null;
+
+						api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+							if ( last !== group ) {
+								$(rows).eq( i ).before(
+								'<tr class="group"><td colspan="' + total_cols + '">'+group+'</td></tr>'
+								);
+
+								last = group;
+							}
+						} );
+					}
+				} );
+
+				// Order by the grouping
+				$('#git_events tbody').on( 'click', 'tr.group', function () {
+					var currentOrder = table.order()[0];
+					if ( currentOrder[0] === groupColumn && currentOrder[1] === 'asc' ) {
+						table.order( [ groupColumn, 'desc' ] ).draw();
+					}
+					else {
+						table.order( [ groupColumn, 'asc' ] ).draw();
+					}
+				} );
+				$('a').attr('target', '_blank');
+			} );
+		</script>
+	</head>
+	<body>
+		<center><h2>[% organization %] users git push events</h2></center>
+		<div>
+			<table id="git_events" class="display" style="width:100%">
+				<thead>
+				<tr>
+					<th>User</th>
+					<th>Date</th>
+					<th>Repository</th>
+					<th>Branches</th>
+					<th>Commits</th>
+				</tr>
+			</thead>
+			<tbody>
+				[% FOREACH event IN events %]
+				<tr>
+					[% SET user_name = event.User %]
+					[% SET repo = event.Repository %]
+					<td>
+						<img height="30" width="30" src="[% user_info.$user_name.logo %]"><br/>
+						<a href="https://github.com/[% user_name %]">[% user_name %]</a>
+					</td>
+					<td>[% event.CreatedTime %]</td>
+					<td><a href="https://github.com/[% repo %]">[% repo %]</a></td>
+					<td>
+						[% SET a = 0 %]
+						[% FOREACH branch IN event.Branches %]
+						[% IF a %]
+						&nbsp;|&nbsp;
+						[% END %]
+						<a href="https://github.com/[% repo %]/tree/[% branch %]">[% branch %]</a>
+						[% a = 1 %]
+						[% END %]
+					</td>
+					<td>[% event.Commits %]</td>
+				</tr>
+				[% END %]
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>
