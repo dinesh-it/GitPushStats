@@ -47,13 +47,23 @@ foreach (1,2,3) {
     foreach my $ev (@events) {
         my $type = $ev->{type};
 
-        next if($type ne 'PushEvent');
+        next if($type ne 'PushEvent' and $type ne 'CreateEvent');
 
         my $repo_name = $ev->{repo}->{name};
         my $time = $ev->{created_at};
         my $dt = $format->parse_datetime($time);
         my $date = $dt->format_cldr('YYYY-MM-dd');
-        my $commits = $ev->{payload}->{commits};
+        my $payload = $ev->{payload};
+        my $commits = $payload->{commits};
+
+        # Consider new branch creation as single commit
+        # If somebody is pushing commits with new branch,github not shows those commits
+        if(!$commits and $payload->{ref_type} eq 'branch') {
+            $commits = ['NewBranch'];
+        }
+
+        next if(!$commits);
+
         my $branch = $ev->{payload}->{ref};
         $branch =~ s/refs\/heads\///;
         my $pushed_by = $ev->{actor}->{login};
