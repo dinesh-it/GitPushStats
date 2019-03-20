@@ -52,7 +52,10 @@
 		</script>
 	</head>
 	<body>
-		<center><h2>[% organization %] users git push events</h2></center>
+		<center>
+			<h2>[% organization %] users git push events</h2>
+			<p>Report Generated on [% today_date %]</p>
+		</center>
 		<div>
 			<table id="git_events" class="display" style="width:100%">
 				<thead>

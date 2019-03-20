@@ -14,6 +14,7 @@ use strict;
 use warnings;
 use Net::GitHub;
 use Template;
+use DateTime;
 use DateTime::Format::Strptime qw( );
 
 my $stop = 0;
@@ -38,6 +39,10 @@ my $format = DateTime::Format::Strptime->new(
     pattern   => '%Y-%m-%dT%H:%M:%SZ',
     on_error  => 'croak',
 );
+
+my $today_date = DateTime->now();
+$today_date->set_time_zone('Asia/Kolkata');
+$today_date = $today_date->format_cldr('yyy MMM dd hh:mm:ss a');
 
 my $user_info;
 
@@ -86,6 +91,7 @@ foreach (1,2,3) {
 }
 
 print "Git Push details\n" if($no_html);
+print "Generated Date: $today_date\n" if($no_html);
 
 @events = ();
 foreach my $name (sort keys %{$result}) {
@@ -119,6 +125,7 @@ my $vars = {
     events => \@events,
     organization => ucfirst($ENV{GITHUB_ORG}),
     user_info => $user_info,
+    today_date => $today_date . '',
 };
 
 open my $F, ">$html_file" or die "Unable to open file $!";
