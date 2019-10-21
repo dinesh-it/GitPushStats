@@ -29,7 +29,7 @@ exit if($stop);
 
 my $no_html = $ARGV[1] || 0;
  
-my $gh = Net::GitHub->new( access_token => $ENV{GITHUB_TOKEN}, per_page => 100);
+my $gh = Net::GitHub->new(access_token => $ENV{GITHUB_TOKEN}, per_page => 100);
 my $event = $gh->event;
 my $result;
 
@@ -47,10 +47,12 @@ $today_date = $today_date->format_cldr('yyy MMM dd hh:mm:ss a');
 my $user_info;
 
 # Github api allows only 3 pages for events and 100 events per page max
+my $events_count = 0;
 foreach (1,2,3) {
     print STDERR "Page $_\n";
     foreach my $ev (@events) {
         my $type = $ev->{type};
+        $events_count++;
 
         next if($type ne 'PushEvent' and $type ne 'CreateEvent');
 
@@ -89,6 +91,8 @@ foreach (1,2,3) {
     }
     @events = $event->next_page;
 }
+
+print "Fetched $events_count events\n";
 
 print "Git Push details\n" if($no_html);
 print "Generated Date: $today_date\n" if($no_html);
