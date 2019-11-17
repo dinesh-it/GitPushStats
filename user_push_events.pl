@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #
-# user_git_commits.pl
+# user_push_events.pl
 #
 # Developed by Dinesh D
 # All rights reserved.
